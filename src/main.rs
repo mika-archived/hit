@@ -48,14 +48,14 @@ fn read_from_file(path: &str, pattern: regex::Regex) -> Result<(), String> {
             for mat in pattern.find_iter(&buffer) {
                 if pos <= mat.start() {
                     // write buffer
-                    let _ = write!(&mut stdout, "{}", &buffer[pos..mat.start()]);
+                    write!(&mut stdout, "{}", &buffer[pos..mat.start()]).unwrap();
                 }
 
                 // highlight keywords
                 color.set_fg(Some(Color::Green));
                 color.set_bold(true);
                 stdout.set_color(&mut color).map_err(|e| e.to_string())?;
-                let _ = write!(&mut stdout, "{}", &buffer[mat.start()..mat.end()]);
+                write!(&mut stdout, "{}", &buffer[mat.start()..mat.end()]).unwrap();
 
                 // reset color
                 color.clear();
@@ -64,7 +64,7 @@ fn read_from_file(path: &str, pattern: regex::Regex) -> Result<(), String> {
             }
 
             if pos < buffer.len() {
-                let _ = write!(&mut stdout, "{}", &buffer[pos..]);
+                write!(&mut stdout, "{}", &buffer[pos..]).unwrap();
             }
         } else {
             print!("{}", buffer);
