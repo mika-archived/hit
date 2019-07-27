@@ -26,7 +26,7 @@ fn main() -> Result<(), String> {
     return Ok(());
 }
 
-fn read_from_file(path: &str, pattern: regex::Regex) -> Result<(), String> {
+fn read_from_file(path: &str, pattern: Regex) -> Result<(), String> {
     let path = Path::new(path);
     if !path.exists() || !path.is_file() {
         return Err(format!(
@@ -47,7 +47,7 @@ fn read_from_file(path: &str, pattern: regex::Regex) -> Result<(), String> {
     return Ok(());
 }
 
-fn print_line(buffer: &str, pattern: &regex::Regex) -> Result<(), String> {
+fn print_line(buffer: &str, pattern: &Regex) -> Result<(), String> {
     if !pattern.is_match(&buffer) {
         print!("{}", buffer);
         return Ok(());
