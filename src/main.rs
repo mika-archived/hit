@@ -5,9 +5,8 @@ extern crate regex;
 extern crate termcolor;
 
 use std::fs::File;
-use std::io::{stdin, BufRead, BufReader, Read, Write};
+use std::io::{stdin, BufRead, BufReader, Write};
 use std::path::Path;
-use std::str::from_utf8;
 
 use atty::Stream;
 use regex::Regex;
@@ -54,17 +53,12 @@ fn read_from_file(path: &str, pattern: Regex) -> Result<(), String> {
 fn read_from_pipe(pattern: Regex) -> Result<(), String> {
     let stdin = stdin();
     let mut lockd = stdin.lock();
-    let mut buffer = [0u8; 1024];
+    let mut reader = BufReader::new(&mut lockd);
+    let mut buffer = String::new();
 
-    loop {
-        match lockd.read(&mut buffer) {
-            Ok(0) => break,
-            Ok(n) => {
-                let string = from_utf8(&buffer[0..n]).map_err(|e| e.to_string())?;
-                print_line(&string, &pattern)?;
-            }
-            Err(e) => return Err(e.to_string()),
-        }
+    while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
+        print_line(&buffer, &pattern)?;
+        buffer.clear();
     }
     return Ok(());
 }
