@@ -29,6 +29,15 @@ Read from stdin
 > tail -f /var/log/nginx.log | hit 401
 ```
 
+If you prefer green to red for highlight, you can change the color.
+
+```bash
+> hit red --color red ./README.md
+# or ANSI 256 colors
+> hit red --color 196 ./README.md
+# or HEX RGB
+> hit red --color 255,00,00 ./README.md
+```
 
 ## Installation
 
