@@ -19,8 +19,8 @@ fn main() -> Result<(), String> {
 
     let pattern = matches.value_of("PATTERN").unwrap(); // required, `unwrap` is safe
     let pattern = Regex::new(pattern).map_err(|e| e.to_string())?; // regex:Error to String
-    let color   = matches.value_of("COLOR").unwrap();
-    let color: Color   = color.parse().unwrap();
+    let color = matches.value_of("COLOR").unwrap();
+    let color: Color = color.parse().unwrap();
 
     if let Some(path) = matches.value_of("PATH") {
         return read_from_file(path, pattern, color);
@@ -62,6 +62,7 @@ fn read_from_pipe(pattern: Regex, color: Color) -> Result<(), String> {
         print_line(&buffer, &pattern, color)?;
         buffer.clear();
     }
+
     return Ok(());
 }
 
