@@ -19,17 +19,19 @@ fn main() -> Result<(), String> {
 
     let pattern = matches.value_of("PATTERN").unwrap(); // required, `unwrap` is safe
     let pattern = Regex::new(pattern).map_err(|e| e.to_string())?; // regex:Error to String
+    let color   = matches.value_of("COLOR").unwrap();
+    let color: Color   = color.parse().unwrap();
 
     if let Some(path) = matches.value_of("PATH") {
-        return read_from_file(path, pattern);
+        return read_from_file(path, pattern, color);
     } else if !atty::is(Stream::Stdin) {
-        return read_from_pipe(pattern);
+        return read_from_pipe(pattern, color);
     }
 
     return Ok(());
 }
 
-fn read_from_file(path: &str, pattern: Regex) -> Result<(), String> {
+fn read_from_file(path: &str, pattern: Regex, color: Color) -> Result<(), String> {
     let path = Path::new(path);
     if !path.exists() || !path.is_file() {
         return Err(format!(
@@ -43,27 +45,27 @@ fn read_from_file(path: &str, pattern: Regex) -> Result<(), String> {
     let mut buffer = String::new();
 
     while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
-        print_line(&buffer, &pattern)?;
+        print_line(&buffer, &pattern, color)?;
         buffer.clear();
     }
 
     return Ok(());
 }
 
-fn read_from_pipe(pattern: Regex) -> Result<(), String> {
+fn read_from_pipe(pattern: Regex, color: Color) -> Result<(), String> {
     let stdin = stdin();
     let mut lockd = stdin.lock();
     let mut reader = BufReader::new(&mut lockd);
     let mut buffer = String::new();
 
     while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
-        print_line(&buffer, &pattern)?;
+        print_line(&buffer, &pattern, color)?;
         buffer.clear();
     }
     return Ok(());
 }
 
-fn print_line(buffer: &str, pattern: &Regex) -> Result<(), String> {
+fn print_line(buffer: &str, pattern: &Regex, clr: Color) -> Result<(), String> {
     if !pattern.is_match(&buffer) {
         print!("{}", buffer);
         return Ok(());
@@ -78,7 +80,7 @@ fn print_line(buffer: &str, pattern: &Regex) -> Result<(), String> {
             write!(&mut stdout, "{}", &buffer[pos..mat.start()]).unwrap();
         }
 
-        color.set_fg(Some(Color::Green));
+        color.set_fg(Some(clr));
         color.set_bold(true);
         stdout.set_color(&mut color).map_err(|e| e.to_string())?;
         write!(&mut stdout, "{}", &buffer[mat.start()..mat.end()]).unwrap();

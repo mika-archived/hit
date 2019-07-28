@@ -22,3 +22,4 @@ termcolor = "1"
 
 [build-dependencies]
 clap = "2.33.0"
+termcolor = "1"

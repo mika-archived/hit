@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate clap;
+extern crate termcolor;
 
 use std::env;
 use clap::Shell;
