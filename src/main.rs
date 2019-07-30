@@ -5,7 +5,7 @@ extern crate regex;
 extern crate termcolor;
 
 use std::fs::File;
-use std::io::{stdin, BufRead, BufReader, Write};
+use std::io::{stdin, stdout, BufRead, BufReader, Write};
 use std::path::Path;
 
 use atty::Stream;
@@ -54,8 +54,8 @@ fn read_from_file(path: &str, pattern: Regex, color: Color) -> Result<(), String
 
 fn read_from_pipe(pattern: Regex, color: Color) -> Result<(), String> {
     let stdin = stdin();
-    let mut lockd = stdin.lock();
-    let mut reader = BufReader::new(&mut lockd);
+    let mut locked = stdin.lock();
+    let mut reader = BufReader::new(&mut locked);
     let mut buffer = String::new();
 
     while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
@@ -68,7 +68,11 @@ fn read_from_pipe(pattern: Regex, color: Color) -> Result<(), String> {
 
 fn print_line(buffer: &str, pattern: &Regex, clr: Color) -> Result<(), String> {
     if !pattern.is_match(&buffer) {
-        print!("{}", buffer);
+        let stdout = stdout();
+        let mut locked = stdout.lock();
+
+        write!(&mut locked, "{}", buffer).unwrap();
+        locked.flush().unwrap();
         return Ok(());
     }
 
@@ -94,6 +98,8 @@ fn print_line(buffer: &str, pattern: &Regex, clr: Color) -> Result<(), String> {
     if pos < buffer.len() {
         write!(&mut stdout, "{}", &buffer[pos..]).unwrap();
     }
+
+    stdout.flush().unwrap();
 
     return Ok(());
 }
