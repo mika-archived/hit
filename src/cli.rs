@@ -14,7 +14,7 @@ pub fn build() -> App<'static, 'static> {
   return clap::app_from_crate!()
     .arg(
       Arg::with_name("PATTERN")
-        .help("A regular expression used for highlighing.")
+        .help("A regular expression used for highlighting.")
         .required(true)
         .index(1),
     )
