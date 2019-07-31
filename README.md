@@ -2,7 +2,6 @@
 
 Highlight keywords, that's all.
 
-
 ## How to use
 
 Highlight keywords in terminal, from a single file
@@ -23,10 +22,10 @@ Read from stdin
 > curl -s https://sh.rustup.rs | hit "[Rr]ust"
 ```
 
-`hit` can be combined with `tail -f` to continously monitor a given file for highlight keywords
+`hit` can be combined with `tail -f` to continuously monitor a given file for highlight keywords
 
 ```bash
-> tail -f /var/log/nginx.log | hit 401
+> tail -f /var/log/nginx/error.log | hit 401
 ```
 
 If you prefer green to red for highlight, you can change the color.
