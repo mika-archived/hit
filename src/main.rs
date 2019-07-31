@@ -42,20 +42,18 @@ fn read_from_file(path: &str, pattern: Regex, color: Color) -> Result<(), String
 
     let file = File::open(path).map_err(|e| e.to_string())?; // std::io::Error to String
     let mut reader = BufReader::new(file);
-    let mut buffer = String::new();
 
-    while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
-        print_line(&buffer, &pattern, color)?;
-        buffer.clear();
-    }
-
-    return Ok(());
+    return read_line(&mut reader, pattern, color);
 }
 
 fn read_from_pipe(pattern: Regex, color: Color) -> Result<(), String> {
     let stdin = stdin();
-    let mut locked = stdin.lock();
-    let mut reader = BufReader::new(&mut locked);
+    let mut reader = stdin.lock();
+
+    return read_line(&mut reader, pattern, color);
+}
+
+fn read_line(reader: &mut BufRead, pattern: Regex, color: Color) -> Result<(), String> {
     let mut buffer = String::new();
 
     while reader.read_line(&mut buffer).map_err(|e| e.to_string())? > 0 {
