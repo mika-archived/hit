@@ -31,7 +31,7 @@ Read from stdin
 and chaining with other tools
 
 ```bash
-> tail -f /var/logn/nginx/error.log | rg "GET /" --line-buffered | hit "HTTP/[^\s\"]"
+> tail -f /var/log/nginx/error.log | rg "GET /" --line-buffered | hit "HTTP/[^\s\"]"
 ```
 
 If you prefer green to red for highlight, you can change the color.
@@ -42,6 +42,15 @@ If you prefer green to red for highlight, you can change the color.
 > hit red --color 196 ./README.md
 # or HEX RGB
 > hit red --color 255,00,00 ./README.md
+```
+
+`hit` supports multiple keywords.
+
+```bash
+# HTTP/1.1 and HTTP/2.0 is highlighted as green
+> tail -f /var/log/nginx/access.log | hit -e "HTTP/1.1" -e "HTTP/2.0" -c green
+# HTTP/1.1 is highlighted as red and HTTP/2.0 is highlighted as green
+> tail -f /var/log/nginx/access.log | hit -e "HTTP/1.1" -c red -e "HTTP/2.0" -c green
 ```
 
 ## Installation
