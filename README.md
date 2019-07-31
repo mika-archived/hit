@@ -28,6 +28,12 @@ Read from stdin
 > tail -f /var/log/nginx/error.log | hit 401
 ```
 
+and chaining with other tools
+
+```bash
+> tail -f /var/logn/nginx/error.log | rg "GET /" --line-buffered | hit "HTTP/[^\s\"]"
+```
+
 If you prefer green to red for highlight, you can change the color.
 
 ```bash
